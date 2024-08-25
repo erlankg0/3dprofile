@@ -1,25 +1,50 @@
-import React, { useState, useRef } from 'react'
-import { motion } from "framer-motion";
+import React, {useState, useRef} from 'react'
+import {motion} from "framer-motion";
 import emailjs from "@emailjs/browser";
 
-import { styles } from "../style.js";
-import { EarthCanvas } from "./canvas";
-import { SectionWrapper } from "../hoc"
-import { slideIn } from "../utils/motion.js";
+import {styles} from "../style.js";
+import {EarthCanvas} from "./canvas";
+import {SectionWrapper} from "../hoc";
+import {slideIn} from "../utils/motion.js";
+
 
 const Contact = () => {
     const formRef = useRef();
     const [form, setForm] = useState({
         name: '',
         email: '',
-        messages: '',
-    })
+        messages: '',  // Убедитесь, что имя поля согласуется
+    });
     const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
-    }
+        const {name, value} = event.target;
+        setForm({...form, [name]: value});
+    };
+
     const handleSubmit = (event) => {
-    }
+        event.preventDefault();
+        setLoading(true);
+        emailjs.send(
+            'service_dj6a0mt',
+            'template_q2log2h',
+            {
+                from_name: form.name,
+                to_name: 'Erlan Abdraimov',
+                from_email: form.email,
+                to_email: 'era.ab.02@gmail.com',
+                message: form.messages,  // Добавлено поле message
+            },
+            'rmX-WG_CKHrRFIHIUnL98'
+        ).then(() => {
+            setLoading(false);
+            alert('Thank you, I will get back to you');
+            setForm({name: '', email: '', messages: ''});
+        }).catch((error) => {
+            setLoading(false);
+            console.log(error);
+        });
+    };
 
     return (
         <div className={'xl:mt-12 xl:flex-row flex-col-reverse flex gap-10 overflow-hidden'}>
@@ -66,12 +91,12 @@ const Contact = () => {
                             value={form.messages}
                             onChange={handleChange}
                             placeholder={"What do you want to say ?"}
-                            className={'bg-tertiary py-5 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium '}
+                            className={'bg-tertiary py-5 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'}
                         />
                     </label>
                     <button
                         type={'submit'}
-                        className='bg-tertiary py-4 px-8 outline-none w-fit text-white font-bold shawod-md shadow-primary rounded-xl'
+                        className='bg-tertiary py-4 px-8 outline-none w-fit text-white font-bold shadow-md shadow-primary rounded-xl'
                     >
                         {loading ? 'Sending...' : 'Send'}
                     </button>
@@ -82,10 +107,10 @@ const Contact = () => {
                 variants={slideIn('right', 'tween', .2, 1)}
                 className='xl:flex-1 xl:h-auto md:h-[550px] h-[350px]'
             >
-                <EarthCanvas />
+                <EarthCanvas/>
             </motion.div>
         </div>
-    )
-}
+    );
+};
 
-export default SectionWrapper(Contact, 'contact')
+export default SectionWrapper(Contact, 'contact');
